@@ -2,7 +2,7 @@
 
 To use this, your file structure must be something like this:
 
-    u/
+    upload/
         script/
             include/
                 mysql.php
@@ -13,5 +13,5 @@ To use this, your file structure must be something like this:
 
 This is so you can have your images in u/ and your users can link something similar to this:
 
-    http://u.yourdomain.com/image.png
+    http://upload.yourdomain.com/image.png
 
