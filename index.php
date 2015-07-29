@@ -146,7 +146,7 @@ if (isset ( $key )) {
 			$target = getcwd () . "/../" . $newfilename;
 			if (move_uploaded_file ( $uploaded_file ['tmp_name'], $target )) {
 				$userFromKey = get_username_from_key ( $key );
-				log_uploaded_file ( $userFromKey, $key );
+				log_uploaded_file ( $userFromKey, $key, $newfilename );
 				$method = $_POST ['method'];
 				if (! isset ( $method )) {
 					$method = "json";
