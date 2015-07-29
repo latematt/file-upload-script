@@ -8,10 +8,11 @@ include "include/mysql.php";
  * - extension blocking
  * - easy key protection
  * - file logging system so you know who's uploading what
+ * - different methods to return data (see line 151)
  *
  * used for http://u.lmao.gq
  */
-function generateRandomFileName() {
+function generate_random_file_name() {
 	$characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 	$newname = '';
 	for($i = 0; $i < rand ( 4, 8 ); $i ++) {
@@ -20,17 +21,17 @@ function generateRandomFileName() {
 	
 	return $newname;
 }
-function checkExtension($extension, $blockedExtensions) {
-	$blockedFound = false;
-	foreach ( $blockedExtensions as $bExtension ) {
-		if ($extension == $bExtension) {
-			$blockedFound = true;
+function check_extension($extension, $blocked_extensions) {
+	$valid_extension = true;
+	foreach ( $blocked_extensions as $blocked_extension ) {
+		if ($extension == $blocked_extension) {
+			$valid_extension = false;
 		}
 	}
 	
-	return $blockedFound;
+	return $valid_extension;
 }
-function checkKey($key, $mysql_host, $mysql_user, $mysql_password, $mysql_database) {
+function check_key($key, $mysql_host, $mysql_user, $mysql_password, $mysql_database) {
 	$mysqli = new mysqli ( $mysql_host, $mysql_user, $mysql_password, $mysql_database );
 	if ($mysqli->connection_errno > 0) {
 		$data = array (
@@ -59,7 +60,7 @@ function checkKey($key, $mysql_host, $mysql_user, $mysql_password, $mysql_databa
 	
 	return $keyValid;
 }
-function logFile($username, $key, $filename, $mysql_host, $mysql_user, $mysql_password, $mysql_database) {
+function log_uploaded_file($username, $key, $filename, $mysql_host, $mysql_user, $mysql_password, $mysql_database) {
 	$mysqli = new mysqli ( $mysql_host, $mysql_user, $mysql_password, $mysql_database );
 	if ($mysqli->connection_errno > 0) {
 		$data = array (
@@ -83,7 +84,7 @@ function logFile($username, $key, $filename, $mysql_host, $mysql_user, $mysql_pa
 	
 	$mysqli->close ();
 }
-function getUsernameFromKey($key, $mysql_host, $mysql_user, $mysql_password, $mysql_database) {
+function get_username_from_key($key, $mysql_host, $mysql_user, $mysql_password, $mysql_database) {
 	$mysqli = new mysqli ( $mysql_host, $mysql_user, $mysql_password, $mysql_database );
 	if ($mysqli->connection_errno > 0) {
 		$data = array (
@@ -115,7 +116,7 @@ function getUsernameFromKey($key, $mysql_host, $mysql_user, $mysql_password, $my
 
 $key = $_POST ['key'];
 // blocked extension array (add wanted blocked extensions)
-$blockedExtensions = array (
+$blocked_extensions = array (
 		"js",
 		"php",
 		"php4",
@@ -131,29 +132,22 @@ $blockedExtensions = array (
 );
 
 if (isset ( $key )) {
-	if (checkKey ( $key, $mysql_host, $mysql_user, $mysql_password, $mysql_database )) {
-		$uploadedFile = $_FILES ["file"];
-		$basefilename = basename ( $uploadedFile ["name"] );
-		$extension = explode ( ".", $uploadedFile ["name"] );
+	if (check_key ( $key, $mysql_host, $mysql_user, $mysql_password, $mysql_database )) {
+		$uploaded_file = $_FILES ["file"];
+		$basefilename = basename ( $uploaded_file ["name"] );
+		$extension = explode ( ".", $uploaded_file ["name"] );
 		$extension = end ( $extension );
-		if (checkExtension ( $extension, $blockedExtensions )) {
+		if (check_extension ( $extension, $blocked_extensions )) {
 			$data = array (
 					'error' => 'You are not allowed to upload this type of file.' 
 			);
 			echo json_encode ( $data );
 		} else {
-			$newfilename = generateRandomFileName () . "." . $extension;
+			$newfilename = generate_random_file_name () . "." . $extension;
 			$target = getcwd () . "/../" . $newfilename;
-			if (move_uploaded_file ( $uploadedFile ['tmp_name'], $target )) {
-				$userFromKey = getUsernameFromKey ( $key, $mysql_host, $mysql_user, $mysql_password, $mysql_database );
-				logFile ( $userFromKey, $key, $newfilename, $mysql_host, $mysql_user, $mysql_password, $mysql_database );
-				
-				// method sets how it returns data
-				// available methods:
-				// - json
-				// - directlink
-				// this defaults to json if it is not set
-				
+			if (move_uploaded_file ( $uploaded_file ['tmp_name'], $target )) {
+				$userFromKey = get_username_from_key ( $key, $mysql_host, $mysql_user, $mysql_password, $mysql_database );
+				log_uploaded_file ( $userFromKey, $key, $newfilename, $mysql_host, $mysql_user, $mysql_password, $mysql_database );
 				$method = $_POST ['method'];
 				if (! isset ( $method )) {
 					$method = "json";
