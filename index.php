@@ -137,7 +137,7 @@ if (isset ( $key )) {
 		$basefilename = basename ( $uploaded_file ["name"] );
 		$extension = explode ( ".", $uploaded_file ["name"] );
 		$extension = end ( $extension );
-		if (check_extension ( $extension, $blocked_extensions )) {
+		if (! check_extension ( $extension, $blocked_extensions )) {
 			$data = array (
 					'error' => 'You are not allowed to upload this type of file.' 
 			);
