@@ -40,7 +40,7 @@ function check_key($key) {
 	if ($mysqli->connection_errno > 0) {
 		output_json ( array (
 				'mysql_error' => $mysqli->connect_error,
-				"mysql_error_type" => "database_connection" 
+				'mysql_error_type' => 'database_connection' 
 		) );
 	}
 	
@@ -48,7 +48,7 @@ function check_key($key) {
 	if (! $result) {
 		output_json ( array (
 				'mysql_error' => $mysqli->error,
-				"mysql_error_type" => "user_fetching" 
+				'mysql_error_type' => 'user_fetching' 
 		) );
 	}
 	
@@ -68,7 +68,7 @@ function log_uploaded_file($username, $key, $filename) {
 	if ($mysqli->connection_errno > 0) {
 		output_json ( array (
 				'mysql_error' => $mysqli->connect_error,
-				"mysql_error_type" => "database_connection" 
+				'mysql_error_type' => 'database_connection' 
 		) );
 	}
 	
@@ -79,7 +79,7 @@ function log_uploaded_file($username, $key, $filename) {
 	if (! $result) {
 		output_json ( array (
 				'mysql_error' => $mysqli->error,
-				"mysql_error_type" => "file_logging" 
+				'mysql_error_type' => 'file_logging' 
 		) );
 	}
 	
@@ -91,7 +91,7 @@ function get_username_from_key($key) {
 	if ($mysqli->connection_errno > 0) {
 		output_json ( array (
 				'mysql_error' => $mysqli->connect_error,
-				"mysql_error_type" => "database_connection" 
+				'mysql_error_type' => 'database_connection' 
 		) );
 	}
 	
@@ -99,7 +99,7 @@ function get_username_from_key($key) {
 	if (! $result) {
 		output_json ( array (
 				'mysql_error' => $mysqli->error,
-				"mysql_error_type" => "user_fetching" 
+				'mysql_error_type' => 'user_fetching' 
 		) );
 	}
 	
@@ -128,7 +128,7 @@ $blocked_extensions = array (
 		"xhtml",
 		"jhtml",
 		"css",
-		"swf"
+		"swf" 
 );
 
 if (isset ( $key )) {
