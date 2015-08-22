@@ -153,7 +153,7 @@ if (isset ( $key )) {
 					$fixed_img = imagecreatefrompng ( $target );
 					imagepng ( $fixed_img, $target );
 					imagedestroy ( $fixed_img );
-				} elseif ($extension == "jpg") {
+				} elseif ($extension == "jpg" || $extension == "jpeg") {
 					$fixed_img = imagecreatefromjpeg ( $target );
 					imagejpeg ( $fixed_img, $target );
 					imagedestroy ( $fixed_img );
