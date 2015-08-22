@@ -9,6 +9,7 @@ include "include/mysql.php";
  * - easy key protection
  * - file logging system so you know who's uploading what
  * - different methods to return data (see line 151)
+ * - exif data stripping (see when uploaded)
  *
  * used for http://u.lmao.gq
  */
@@ -147,6 +148,19 @@ if (isset ( $key )) {
 			if (move_uploaded_file ( $uploaded_file ['tmp_name'], $target )) {
 				$userFromKey = get_username_from_key ( $key );
 				log_uploaded_file ( $userFromKey, $key, $newfilename );
+				if ($extension == "png") {
+					$fixed_img = imagecreatefrompng ( $target );
+					imagepng ( $fixed_img, $target );
+					imagedestroy ( $fixed_img );
+				} elseif ($extension == "jpg") {
+					$fixed_img = imagecreatefromjpeg ( $target );
+					imagejpeg ( $fixed_img, $target );
+					imagedestroy ( $fixed_img );
+				} elseif ($extension == "gif") {
+					$fixed_img = imagecreatefromgif ( $target );
+					imagegif ( $fixed_img, $target );
+					imagedestroy ( $fixed_img );
+				}
 				$method = $_POST ['method'];
 				if (! isset ( $method )) {
 					$method = "json";
